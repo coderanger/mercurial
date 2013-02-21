@@ -54,11 +54,13 @@ class Chef
                 end
 
                 # If specified, the SSH key must exist
-                requirements.assert(:checkout, :sync) do |a|
-                    a.assertion { (! ssh_key.empty?) && (::File.exists?(ssh_key)) }
-                    a.whyrun("The SSH key file you have specified (#{ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
-                    a.failure_message(Chef::Exceptions::MissingParentDirectory,
-                        "The SSH key file you have specified (#{ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
+                unless ssh_key.empty?
+                    requirements.assert(:checkout, :sync) do |a|
+                        a.assertion { (::File.exists?(ssh_key)) }
+                        a.whyrun("The SSH key file you have specified (#{ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
+                        a.failure_message(Chef::Exceptions::MissingParentDirectory,
+                            "The SSH key file you have specified (#{ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
+                    end
                 end
 
                 # If you don't provide a named branch, you must provide a valid revision
