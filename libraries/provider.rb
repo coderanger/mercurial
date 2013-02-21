@@ -55,7 +55,7 @@ class Chef
 
                 # If specified, the SSH key must exist
                 requirements.assert(:checkout, :sync) do |a|
-                    a.assertion { (! @new_resource.ssh_key.empty?) && (::File.exists?(@new_resource.ssh_key)) }
+                    a.assertion { @new_resource.respond_to?(:ssh_key) && (! @new_resource.ssh_key.empty?) && (::File.exists?(@new_resource.ssh_key)) }
                     a.whyrun("The SSH key file you have specified (#{@new_resource.ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
                     a.failure_message(Chef::Exceptions::MissingParentDirectory,
                         "The SSH key file you have specified (#{@new_resource.ssh_key}) does not exist! Please specifiy a valid SSH private key file.")
@@ -118,11 +118,11 @@ class Chef
                 args = []
                 ssh_wrapper = 'ssh'
                 ssh_wrapper = @new_resource.ssh_wrapper if @new_resource.ssh_wrapper
-                ssh_wrapper += ' -o StrictHostKeyChecking=no' if @new_resource.ssh_ignore
-                ssh_wrapper += " -i #{@new_resource.ssh_key}" unless @new_resource.ssh_key.empty?
+                ssh_wrapper += ' -o StrictHostKeyChecking=no' if @new_resource.respond_to?(:ssh_ignore) && @new_resource.ssh_ignore
+                ssh_wrapper += " -i #{@new_resource.ssh_key}" if @new_resource.respond_to?(:ssh_key) && !@new_resource.ssh_key.empty?
 
                 args << "-e '#{ssh_wrapper}'" unless ssh_wrapper == 'ssh'
-                args << "--insecure" if (@new_resource.ssh_ignore && hg_version?.to_f >= 2.0)
+                args << "--insecure" if (@new_resource.respond_to?(:ssh_ignore) && @new_resource.ssh_ignore && hg_version?.to_f >= 2.0)
 
                 clone_cmd = "hg clone #{args.join(' ')} #{@new_resource.repository} #{Shellwords.escape @new_resource.destination}"
                 shell_out!(clone_cmd, run_options(:log_level => :info))
@@ -134,11 +134,11 @@ class Chef
                 args = []
                 ssh_wrapper = 'ssh'
                 ssh_wrapper = @new_resource.ssh_wrapper if @new_resource.ssh_wrapper
-                ssh_wrapper += ' -o StrictHostKeyChecking=no' if @new_resource.ssh_ignore
-                ssh_wrapper += " -i #{@new_resource.ssh_key}" unless @new_resource.ssh_key.empty?
+                ssh_wrapper += ' -o StrictHostKeyChecking=no' if @new_resource.respond_to?(:ssh_ignore) && @new_resource.ssh_ignore
+                ssh_wrapper += " -i #{@new_resource.ssh_key}" if @new_resource.respond_to?(:ssh_key) && !@new_resource.ssh_key.empty?
 
                 args << "-e '#{ssh_wrapper}'" unless ssh_wrapper == 'ssh'
-                args << "--insecure" if (@new_resource.ssh_ignore && hg_version?.to_f >= 2.0)
+                args << "--insecure" if (@new_resource.respond_to?(:ssh_ignore) && @new_resource.ssh_ignore && hg_version?.to_f >= 2.0)
 
                 fetch_command = "hg pull #{args.join(' ')} && hg revert -a -C #{@new_resource.destination}"
                 shell_out!(fetch_command, run_options(:cwd => cwd))
