@@ -36,15 +36,15 @@ class Chef
             end
 
             def ssh_ignore(arg=nil)
-                set_or_return(:ssh_ignore, arg, :kind_of => [ FalseClass, TrueClass ])                
+                set_or_return(:ssh_ignore, arg, :kind_of => [ FalseClass, TrueClass ])
             end
 
             def ssh_key(arg=nil)
-                set_or_return(:ssh_key, arg, :kind_of => String) 
+                set_or_return(:ssh_key, arg, :kind_of => String)
             end
 
             def branch(arg=nil)
-                set_or_return(:branch, arg, :kind_of => [ FalseClass, TrueClass ])                
+                set_or_return(:branch, arg, :kind_of => [ FalseClass, TrueClass ])
             end
 
             alias :reference :revision
