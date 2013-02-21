@@ -240,12 +240,12 @@ class Chef
             end
 
             def ssh_key
-                return nil unless @new_resource.respond_to?(:ssh_key)
+                return '' unless @new_resource.respond_to?(:ssh_key)
                 @new_resource.ssh_key
             end
 
             def ssh_ignore
-                return nil unless @new_resource.respond_to?(:ssh_ignore)
+                return false unless @new_resource.respond_to?(:ssh_ignore)
                 @new_resource.ssh_ignore
             end
 
