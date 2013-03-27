@@ -209,7 +209,9 @@ class Chef
                 end
             end
 
-            alias :revision_slug :find_target_revision
+            def revision_slug
+                find_target_revision(true)
+            end
 
             private
 
